@@ -1,7 +1,17 @@
 const { parse } = require('csv-parse');
 const fs = require('fs');
 
-const results = [];
+const habitablePlanets = [];
+
+// This is a function to find all the "habitable" planets, according to our data
+function isHabitablePlanet(planet) {
+    return planet['koi_disposition'] == 'CONFIRMED' 
+    // Make sure the amount of light is habitable for humans
+    && planet['koi_insol'] > 0.36 
+    && planet['koi_insol'] < 1.11
+    // Make sure the planets's radii is less than 1.6 times that of Earth's
+    && planet['koi_prad'] < 1.6;
+}
 
 fs.createReadStream('kepler_data.csv')
     // pipe() is used for connecting the writable stream source (kepler_data.csv) to a writable stream destination (parse())
@@ -11,12 +21,13 @@ fs.createReadStream('kepler_data.csv')
         columns: true, // This will treat each row in the csv file as an object
     }))
     .on('data', (data) => {
-        results.push(data);
+        if (isHabitablePlanet(data)) {
+            habitablePlanets.push(data);
+        }
     })
     .on('error', (err) => {
         console.log(err);
     })
     .on('end', () => {
-        console.log(results);
-        console.log('done');
+        console.log(`${habitablePlanets.length} habitable planets found!`);
     });
