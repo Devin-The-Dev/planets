@@ -10,7 +10,10 @@ function isHabitablePlanet(planet) {
     && planet['koi_insol'] > 0.36 
     && planet['koi_insol'] < 1.11
     // Make sure the planets's radii is less than 1.6 times that of Earth's
-    && planet['koi_prad'] < 1.6;
+    && planet['koi_prad'] < 1.6
+    // Make sure the planets orbital period is between 100 and 400 days
+    && planet['koi_period'] > 99
+    && planet['koi_period'] < 401;
 }
 
 fs.createReadStream('kepler_data.csv')
